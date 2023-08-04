@@ -1,0 +1,38 @@
+{
+  "name": "pandora",
+  "version": "1.0.0",
+  "description": "bot",
+  "main": "app.js",
+  "scripts": {
+    "start": "node ./bin/www",
+    "test": "nodemon ./bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gianlucaricaldone/pandora.git"
+  },
+  "keywords": [
+    "pandora"
+  ],
+  "author": "Ricaldone Gianluca",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gianlucaricaldone/pandora/issues"
+  },
+  "homepage": "https://github.com/gianlucaricaldone/pandora#readme",
+  "dependencies": {
+    "@binance/connector": "^3.0.0-rc.2",
+    "aws-sdk": "^2.1401.0",
+    "axios": "^1.4.0",
+    "binance-api-node": "^0.12.6",
+    "ccxt": "^4.0.48",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
+    "mysql": "^2.18.1",
+    "pug": "^3.0.2"
+  }
+}
