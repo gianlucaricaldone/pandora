@@ -38,7 +38,7 @@ class Candela {
     getCandelaFromStartTime(start_time, callback) {
         var query = "SELECT * FROM candela WHERE start_time IN ({start_time}) order by 1 desc;".replace('{start_time}', start_time);
 
-        console.log(query);
+        // console.log(query);
 
         db.executeQuery(query, function (err, results) {
             callback(getErrorCodeByERR(err), results);
