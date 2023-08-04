@@ -147,7 +147,11 @@ class PandoraController {
         return return_data;
     }
 
+    getPIP(price) {
+        return 0.0001 * price;
+    }
 
+    
 }
 
 
