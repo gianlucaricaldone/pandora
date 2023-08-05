@@ -8,7 +8,7 @@ class OrdineController {
 
 
     createNuovoOrdineFromCandela(candela, tipo, callback) {
-        param_order_buy = OrdineController.generaParametriOrdine(candela, tipo, utils.side.BUY);
+        var param_order_buy = OrdineController.generaParametriOrdine(candela, tipo, utils.side.BUY);
         ordineModel.insertOrdineFromCandela(param_order_buy, function (err, result) {
             callback(err, result);
         });

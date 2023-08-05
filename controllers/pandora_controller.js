@@ -32,9 +32,9 @@ class PandoraController {
                 });
             }
         }, function (err, results) {
+            console.log('\nAAAA ASYNC:');
             console.log(results);
             var candele_arretrate = results.candele;
-            var ordine_aperto = results.ordine;
 
             if (Array.isArray(candele_arretrate) && parseInt(candele_arretrate.length) < parseInt(utils.qta_candele_arretrate)) {
                 console.log('NO CANDELE PRECEDENTI');
