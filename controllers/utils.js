@@ -24,14 +24,15 @@ const type = {
 const qta_candele_arretrate = 2;
 
 // PARAMETRI MODIFICABILI
-const pairs = 'OPUSDT';
+const pairs = 'BTCUSDT';
 const pips_ordine = 25;
 const pips_TP = 50;
+const min_streaming = '1m';
 
 // cash ingresso a mercato
 const bet = 100;
 
-
+var url_price = 'https://www.binance.me/api/v3/ticker/price?symbol={pairs}'.replace('{pairs}', pairs);
 // const pips_ordine = 65;
 // const pips_TP = 100;
 
@@ -76,5 +77,7 @@ module.exports = {
     link_type: link_type,
     side: side,
     type: type,
-    qta_candele_arretrate: qta_candele_arretrate
+    qta_candele_arretrate: qta_candele_arretrate,
+    min_streaming: min_streaming,
+    url_price: url_price
 };

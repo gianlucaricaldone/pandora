@@ -6,12 +6,7 @@ var logger = require('morgan');
 
 require('dotenv').config();
 require('dotenv').config();
-const ccxt = require('ccxt');
 
-const binanceClient = new ccxt.binance({
-  apiKey: process.env.API_ENV,
-  secret: process.env.API_SECRET
-});
 
 var indexRouter = require('./routes/index');
 
@@ -55,55 +50,11 @@ app.use(function(err, req, res, next) {
 });
 
 
-function startStreamBinance(pairs) {
-  const { Console } = require('console');
-  logger = new Console({ stdout: process.stdout, stderr: process.stderr });
-  const WebsocketStream = require('@binance/connector/src/websocketStream');
-  const callbacks = {
-    open: () => {
-      logger.debug('Connected with Websocket server');
-    },
-    close: () => {
-      logger.debug('Disconnected with Websocket server');
-    },
-    message: data => {
-      // logger.info(data);
-      aggiungiRigaFlussoBinance(data);
-    }
-  };
-  const websocketStreamClient = new WebsocketStream({logger, callbacks, combinedStreams: true });
-  websocketStreamClient.kline(pairs, '1m');
-}
-
-async function aggiungiRigaFlussoBinance(params) {
-  const start = Date.now();
-
-  data = JSON.parse(params);
-  if (data.data.k.x == true) {
-    
-    // const balances = await binanceClient.fetchBalance();
-    // console.log('balances');
-    // console.log(balances.free['LUNA']);
-
-    // console.log(data);
-    candelaController.insertCandela(data.data.k, function(err, result) {
-      // console.log(result);
-      // console.log(err);
-      console.log('INSERT >> OK');
-    });
-
-
-    pandoraController.canCandelaGeneraOrdine(data.data.k, function (err, result) {
-      // console.log(result);
-      const end = Date.now();
-      console.log(`Execution time: ${end - start} ms\n\n`);
-    });
-  }
-}
 
 
 
 
-startStreamBinance(utils.pairs);
+
+pandoraController.startStreamBinance(utils.pairs);
 
 module.exports = app;

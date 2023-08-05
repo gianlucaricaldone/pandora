@@ -2,6 +2,10 @@
 const utils = require('./utils.js');
 var async = require("async");
 
+const { Console } = require('console');
+var logger = require('morgan');
+logger = new Console({ stdout: process.stdout, stderr: process.stderr });
+
 const RegolaController = require('./regola_controller.js');
 const regolaController = new RegolaController();
 
@@ -9,11 +13,82 @@ const OrdineController = require('./ordine_controller.js');
 const ordineController = new OrdineController();
 
 const CandelaController = require('./candela_controller.js');
-const condelaController = new CandelaController();
+const candelaController = new CandelaController();
+
+const ccxt = require('ccxt');
+
+const binanceClient = new ccxt.binance({
+    apiKey: process.env.API_ENV,
+    secret: process.env.API_SECRET
+});
+
+// const axios = require('axios');
+// const https = require('https');
+
 
 class PandoraController {
     
-    canCandelaGeneraOrdine(candela, main_callback){
+    startStreamBinance(pairs) {
+        // Metodo che fa lo streaming del prezzo e notifica al metodo per la creazione ordine e salvataggioa  DB
+
+        const WebsocketStream = require('@binance/connector/src/websocketStream');
+        const callbacks = {
+            open: () => {
+                logger.debug('Connected with Websocket server');
+            },
+            close: () => {
+                logger.debug('Disconnected with Websocket server');
+            },
+            message: data => {
+                this.aggiungiRigaFlussoBinance(data);
+            }
+        };
+        const websocketStreamClient = new WebsocketStream({ logger, callbacks, combinedStreams: true });
+        websocketStreamClient.kline(pairs, utils.min_streaming);
+    }
+
+    aggiungiRigaFlussoBinance(params) {
+        // Metodo di raccordo,
+        // Riceve la candela in costruzione e controlla il prezzo con eventuali ordini aperti
+        // Se la candela in ingresso si è chiusa in questo momento inserisce nella tabella candela e prova a generare un ordine
+
+        const start = Date.now();
+
+        var data = JSON.parse(params);
+        var prezzo_attuale = data.data.k.c;
+        
+        PandoraController.gestioneOrdiniAttivi(prezzo_attuale);
+
+        if (data.data.k.x == true) {
+
+            // const balances = await binanceClient.fetchBalance();
+            // console.log('balances');
+            // console.log(balances.free['LUNA']);
+            async.parallel({
+                candela: function (callback) {
+                    candelaController.insertCandela(data.data.k, function (err, result) {
+                        // console.log(result);
+                        // console.log(err);
+                        callback(false, null);
+                    });
+                },
+                ordine: function (callback) {
+                    PandoraController.canCandelaGeneraOrdine(data.data.k, function (err, result) {
+                        // console.log(result);
+                        callback(false, null);
+                    });
+                }
+            }, function (err, results) {
+                console.log('INSERT >> OK');
+                const end = Date.now();
+                console.log(`Execution time: ${end - start} ms\n\n`);
+            });
+
+        }
+    }
+
+
+    static canCandelaGeneraOrdine(candela, main_callback) {
         // Formatto per uniformare alle vecchie candele gia inserite
         candela.start_time = candela.t;
         candela.open = candela.o;
@@ -21,7 +96,7 @@ class PandoraController {
 
         async.parallel({
             candele: function (callback) {
-                condelaController.getCandeleArretrate(candela, utils.qta_candele_arretrate, function (err, result) {
+                candelaController.getCandeleArretrate(candela, utils.qta_candele_arretrate, function (err, result) {
                     callback(null, result);
                 });
             },
@@ -51,7 +126,7 @@ class PandoraController {
 
                 const check = PandoraController.checkOrdiniAperti(results.ordine, type);
                 if (check) {
-                    console.log('ORDINE >> NO - ORDINE DI TIPO' + type + " GIA APERTO - " + check);
+                    console.log('ORDINE >> NO - ORDINE DI TIPO ' + type + " GIA APERTO - " + check);
                     main_callback(true, null);
                 }
                 else if (success) {
@@ -114,6 +189,21 @@ class PandoraController {
             }    
         });
         return return_data;
+    }
+
+    static gestioneOrdiniAttivi(prezzo) {
+        ordineController.getOrdiniAttivi(utils.pairs, function (err, ordini) {
+            ordini.forEach(ordine => {
+                if (ordine.side == utils.side.BUY && parseFloat(ordine.price) <= parseFloat(prezzo_attuale)) {
+                    console.log('ORDINE BUY ' + ordine.link + ' DA ATTIVARE');
+                    console.log('PREZZO ' + ordine.price + '<=' + prezzo_attuale);
+                }
+                else if (ordine.side == utils.side.SELL && parseFloat(ordine.price) >= parseFloat(prezzo_attuale)) {
+                    console.log('ORDINE SELL ' + ordine.link + ' DA ATTIVARE');
+                    console.log('PREZZO ' + ordine.price + '>=' + prezzo_attuale);
+                }
+            });
+        });
     }
 }
 
