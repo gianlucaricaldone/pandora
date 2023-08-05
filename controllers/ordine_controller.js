@@ -8,7 +8,7 @@ class OrdineController {
 
 
     createNuovoOrdineFromCandela(candela, tipo, callback) {
-        param_order_buy = OrdineController.generaLimitiOrdine(candela, tipo, utils.side.BUY);
+        param_order_buy = OrdineController.generaParametriOrdine(candela, tipo, utils.side.BUY);
         ordineModel.insertOrdineFromCandela(param_order_buy, function (err, result) {
             callback(err, result);
         });
@@ -46,8 +46,8 @@ class OrdineController {
             'symbol': utils.pairs,
             'side': side,
             'type': utils.type.LIMIT,
-            'amount': dict_ordine.amount,
-            'price': dict_ordine.lv_ordine_h.toFixed(3)
+            'amount': amount,
+            'price': lv_ordine_h.toFixed(3)
         };
     }
 

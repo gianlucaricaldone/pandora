@@ -38,7 +38,7 @@ class PandoraController {
 
             if (Array.isArray(candele_arretrate) && parseInt(candele_arretrate.length) < parseInt(utils.qta_candele_arretrate)) {
                 console.log('NO CANDELE PRECEDENTI');
-                callback(null, []);
+                main_callback(null, []);
             }
             else {
                 candele_arretrate.unshift(candela);
