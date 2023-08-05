@@ -1,13 +1,13 @@
+const utils = require('./utils.js');
+
 const Candela = require('../models/candela.js');
 var candelaModel = new Candela();
-
-const alpha_time = 60000;
 
 class CandelaController {
     constructor() { }
 
     getCandelaPrecedente(candela, callback) {
-        var start_time = parseInt(candela.start_time) - alpha_time;
+        var start_time = parseInt(candela.start_time) - utils.alpha_time;
         candelaModel.getCandelaByStartTime(start_time, function(err, results) {
             callback(err, results);
         });
@@ -18,7 +18,7 @@ class CandelaController {
         var array_start_time = [];
         for (let index = 0; index <= n; index++) {
             if(index > 0) {
-                var diff = alpha_time * index;
+                var diff = utils.alpha_time * index;
                 var start_time = parseInt(candela.start_time) - diff;
                 array_start_time.push(String(start_time));
             }

@@ -55,6 +55,14 @@ exports.executeQuery = function (query, callback) {
             }
         }
 
+        // var objToJson = rows;
+        // var response = [];
+        // for (var key in rows) {
+        //     response.push(rows[key]);
+        // }
+        // objToJson.response = response;
+        // var finalresponse = JSON.stringify(objToJson);
+
         // db.end();
         callback(err, rows);
     });

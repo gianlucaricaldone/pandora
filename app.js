@@ -22,6 +22,8 @@ const candelaController = new CandelaController();
 const PandoraController = require('./controllers/pandora_controller.js');
 const pandoraController = new PandoraController();
 
+const utils = require('./controllers/utils.js');
+
 var app = express();
 
 // view engine setup
@@ -101,7 +103,7 @@ async function aggiungiRigaFlussoBinance(params) {
 
 
 
-pairs = 'btcusdt';
-startStreamBinance(pairs);
+
+startStreamBinance(utils.pairs);
 
 module.exports = app;

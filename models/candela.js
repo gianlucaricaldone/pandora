@@ -21,6 +21,7 @@ class Candela {
         // console.log(query);
 
         db.executeQuery(query, function (err, results) {
+            // console.log(results.insertId);
             callback(getErrorCodeByERR(err), results);
         });
     }

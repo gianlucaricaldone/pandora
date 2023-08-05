@@ -1,18 +1,43 @@
 "use strict";
 
-// const pips_ordine = 30;
-// const pips_TP = 50;
+// PARAMETRI FISSI
+const alpha_time = 60000;
+const PIP = 0.0001;
+const link_type = {
+    'CANDELA': 'CANDELA',
+    'ORDINE': 'ORDINE',
+};
+const side = {
+    'BUY': 'BUY',
+    'SELL': 'SELL'
+};
+const type = {
+    'LIMIT': 'LIMIT',
+    'MARKET': 'MARKET',
+    'STOP_LOSS': 'STOP_LOSS',
+    'STOP_LOSS_LIMIT': 'STOP_LOSS_LIMIT',
+    'TAKE_PROFIT': 'TAKE_PROFIT',
+    'TAKE_PROFIT_LIMIT': 'TAKE_PROFIT_LIMIT',
+    'LIMIT_MAKER': 'LIMIT_MAKER',
+}
+
+
+
+// PARAMETRI MODIFICABILI
+const pairs = 'OPUSDT';
+const pips_ordine = 25;
+const pips_TP = 50;
 
 // cash ingresso a mercato
-const bet = 50;
+const bet = 100;
 
-const pips_ordine = 65;
-const pips_TP = 100;
-const PIP = 0.0001;
+
+// const pips_ordine = 65;
+// const pips_TP = 100;
 
 function getPIP(price) {
-    var pip_gen = PIP * price
-    console.log('PIP GEN: ' +pip_gen);
+    var pip_gen = PIP * price;
+    console.log('PIP GEN: ' + pip_gen);
     return pip_gen;
 }
 
@@ -31,12 +56,16 @@ function convertiCandele(candele) {
 }
 
 
-
 module.exports = {
     getPIP: getPIP,
     convertiCandele: convertiCandele,
     pips_ordine: pips_ordine,
     pips_TP: pips_TP,
     PIP: PIP,
-    bet: bet
+    bet: bet,
+    pairs: pairs,
+    alpha_time: alpha_time,
+    link_type: link_type,
+    side: side,
+    type: type
 };
