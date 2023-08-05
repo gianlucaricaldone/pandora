@@ -197,10 +197,31 @@ class PandoraController {
                 if (ordine.side == utils.side.BUY && parseFloat(ordine.price) <= parseFloat(prezzo_attuale)) {
                     console.log('ORDINE BUY ' + ordine.link + ' DA ATTIVARE');
                     console.log('PREZZO ' + ordine.price + '<=' + prezzo_attuale);
+
+                    if (ordine.link_type == utils.link_type.CANDELA) {
+                        console.log('CALCOLO E CREO TP E SL');
+                    }
+                    else if (ordine.link_type == utils.link_type.ORDINE) {
+                        console.log('CHIUDERE QUESTO ORDINI E CANCELLARE LO SL CON LINK CORRISPONDENTE E LINK_TYPE = ORDINE');
+                    }
+                    else {
+                        console.log('LINK TYPE NON GESTITO: ' + ordine.link_type);
+                    }
                 }
                 else if (ordine.side == utils.side.SELL && parseFloat(ordine.price) >= parseFloat(prezzo_attuale)) {
                     console.log('ORDINE SELL ' + ordine.link + ' DA ATTIVARE');
                     console.log('PREZZO ' + ordine.price + '>=' + prezzo_attuale);
+
+                    if (ordine.link_type == utils.link_type.CANDELA) {
+                        console.log('CALCOLO E CREO TP E SL');
+                    }
+                    else if (ordine.link_type == utils.link_type.ORDINE) {
+                        console.log('CHIUDERE QUESTO ORDINI E CANCELLARE il TP CON LINK CORRISPONDENTE E LINK_TYPE = ORDINE');
+                    }
+                    else {
+                        console.log('LINK TYPE NON GESTITO: ' + ordine.link_type);
+                    }
+
                 }
             });
         });
