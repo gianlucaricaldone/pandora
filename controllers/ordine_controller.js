@@ -63,8 +63,8 @@ class OrdineController {
 
     }
 
-    getOrdiniAttivi(callback) {
-        ordineModel.getOrdiniAttivi(function (err, result) {
+    getOrdiniAttivi(pairs, callback) {
+        ordineModel.getOrdiniAttivi(pairs, function (err, result) {
             callback(null, result);
         });
     }
