@@ -22,6 +22,7 @@
   "homepage": "https://github.com/gianlucaricaldone/pandora#readme",
   "dependencies": {
     "@binance/connector": "^3.0.0-rc.2",
+    "async": "^3.2.4",
     "aws-sdk": "^2.1401.0",
     "axios": "^1.4.0",
     "binance-api-node": "^0.12.6",

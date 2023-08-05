@@ -1,5 +1,6 @@
 
 const utils = require('./utils.js');
+var async = require("async");
 
 const RegolaController = require('./regola_controller.js');
 const regolaController = new RegolaController();
@@ -12,41 +13,80 @@ const condelaController = new CandelaController();
 
 class PandoraController {
     
-    canCandelaGeneraOrdine(candela, callback){
+    canCandelaGeneraOrdine(candela, main_callback){
         // Formatto per uniformare alle vecchie candele gia inserite
         candela.start_time = candela.t;
         candela.open = candela.o;
         candela.close = candela.c;
 
-        const index = 2;
-        condelaController.getCandeleArretrate(candela, index, function(err, results) {
-            if (Array.isArray(results) && parseInt(results.length) < parseInt(index)) {
+        async.parallel({
+            candele: function (callback) {
+                const index = 2;
+                condelaController.getCandeleArretrate(candela, utils.qta_candele_arretrate, function (err, results) {
+                    callback(null, results);
+                });
+            },
+            ordine: function (callback) {
+                ordineController.getOrdiniAttivi(function (err, result) {
+                    callback(null, results);
+                });
+            }
+        }, function (err, results) {
+            console.log(results);
+            var candele_arretrate = results.candele;
+            var ordine_aperto = results.ordine;
+
+            if (Array.isArray(candele_arretrate) && parseInt(candele_arretrate.length) < parseInt(utils.qta_candele_arretrate)) {
                 console.log('NO CANDELE PRECEDENTI');
-                callback(false, true);
+                callback(null, []);
             }
             else {
-                results.unshift(candela);
-                var candele = results;
+                candele_arretrate.unshift(candela);
+                var candele = candele_arretrate;
                 candele = utils.convertiCandele(candele);
 
                 var return_data = PandoraController.cercaRegolaCheFaMatch(candele);
                 var success = return_data.success;
                 var type = return_data.type;
 
+                const check = PandoraController.checkOrdiniAperti(results.ordine, type);
+                if (check) {
+                    console.log('ORDINE >> NO - ORDINE DI TIPO' + type + " GIA APERTO - " + check);
+                    callback(true, null);
+                }
+
                 if (success) {
                     // CREA ORDINE
-                    ordineController.createOrdineFromCandela(candela, type, function (err, results) { 
+                    ordineController.createNuovoOrdineFromCandela(candela, type, function (err, results) {
                         // console.log('ORDINE >> OK - CANDELA ' + candela.start_time + " REGOLA >> " + type);
                         callback(false, true);
                     });
                 }
                 else {
                     console.log('ORDINE >> NO - CANDELA ' + candela.start_time + " NON HA GENERATO ORDINE");
+                    callback(true, null);
                 }
-
-                callback(false, true);
             }
         });
+
+    }
+
+    static checkOrdiniAperti(ordini, tipo) {
+        if (Array.isArray(ordini) && ordini.length !== 0) {
+            var ordine_found = null;
+            ordini.forEach(element => {
+                if (element.pandora_type == type) {
+                    ordine_found = element;
+                    return;
+                }
+            });
+
+            if (ordine_found) {
+                return ordine_found.link;
+            }
+        }
+        
+        return false;
     }
 
     static cercaRegolaCheFaMatch(candele) {

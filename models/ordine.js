@@ -2,14 +2,24 @@
 class Ordine {
     constructor() { }
 
-    insertOrdine(parameters, callback) {
-        var query = "INSERT IGNORE INTO ordine \
-        (`symbol`, `interval`, `open`, `close`, `high`, `low`, `x`, `data`, `start_time`, `close_time` ) \
-        VALUES \
-        ('{symbol}', '{interval}', '{open}', '{close}', '{high}', '{low}', '{x}', '{data}', '{start_time}', '{close_time}'); \
-        ".replace('{symbol}', parameters['s']).replace('{interval}', parameters['i']).replace('{open}', parameters['o']).replace('{close}', parameters['c']).replace('{high}', parameters['h']).replace('{low}', parameters['l']).replace('{x}', parameters['x']).replace('{data}', parameters['data']).replace('{start_time}', parameters['t']).replace('{close_time}', parameters['T']);
+    insertOrdineFromCandela(parameters, callback) {
 
-        // console.log(query);
+        var key = ['id', 'link', 'link_type', 'pandora_type', 'created', 'open', 'closed', 'cancelled', 'symbol', 'side', 'type', 'amount', 'price', 'params'];
+        var string_key = key.join('`');
+        var string_params = '';
+        key.forEach(element => {
+            string_params += "'" + parameters[element] + "',";
+        });
+        string_params.slice(0, -1);
+
+        var query = "INSERT IGNORE INTO ordine \
+            (`{}` ) \
+            VALUES \
+            ({string_params}); \
+        ".replace('{string_key}', string_key).replace('{string_params}', string_params);
+
+
+        console.log(query);
 
         db.executeQuery(query, function (err, results) {
             console.log(results.insertId);
@@ -20,6 +30,16 @@ class Ordine {
 
     getOrdineAttivoStessoTipo(tipo, callback) {
         var query = "SELECT * FROM ordine WHERE pandora_type = '{tipo}' AND attivo = 1 LIMIT 1;".replace('{tipo}', tipo);
+
+        // console.log(query);
+
+        db.executeQuery(query, function (err, results) {
+            callback(getErrorCodeByERR(err), results.insertId);
+        });
+    }
+
+    getOrdiniAttivi(callback) {
+        var query = "SELECT * FROM ordine WHERE open = 1 OR created = 1 LIMIT 1;";
 
         // console.log(query);
 

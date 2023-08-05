@@ -21,7 +21,7 @@ const type = {
     'LIMIT_MAKER': 'LIMIT_MAKER',
 }
 
-
+const qta_candele_arretrate = 2;
 
 // PARAMETRI MODIFICABILI
 const pairs = 'OPUSDT';
@@ -67,5 +67,6 @@ module.exports = {
     alpha_time: alpha_time,
     link_type: link_type,
     side: side,
-    type: type
+    type: type,
+    qta_candele_arretrate: qta_candele_arretrate
 };
