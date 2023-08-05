@@ -1,4 +1,7 @@
 /*jshint multistr: true */
+var db = require('../config/db'); 
+const utils = require('../controllers/utils.js');
+
 class Ordine {
     constructor() { }
 
@@ -23,7 +26,7 @@ class Ordine {
 
         db.executeQuery(query, function (err, results) {
             console.log(results.insertId);
-            callback(getErrorCodeByERR(err), results);
+            callback(utils.getErrorCodeByERR(err), results);
         });
     }
 
@@ -34,7 +37,7 @@ class Ordine {
         // console.log(query);
 
         db.executeQuery(query, function (err, results) {
-            callback(getErrorCodeByERR(err), results.insertId);
+            callback(utils.getErrorCodeByERR(err), results.insertId);
         });
     }
 
@@ -44,17 +47,11 @@ class Ordine {
         // console.log(query);
 
         db.executeQuery(query, function (err, results) {
-            callback(getErrorCodeByERR(err), results.insertId);
+            callback(utils.getErrorCodeByERR(err), results.insertId);
         });
     }
 
-    getErrorCodeByERR(err) {
-        if (err) {
-            return process.env.RES_ERROR;
-        } else {
-            return process.env.RES_SUCCESS;
-        }
-    }
+
 }
 
 

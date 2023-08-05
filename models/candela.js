@@ -1,12 +1,6 @@
 /*jshint multistr: true */
 var db = require('../config/db');
-var getErrorCodeByERR = (err) => {
-    if (err) {
-        return process.env.RES_ERROR;
-    } else {
-        return process.env.RES_SUCCESS;
-    }
-};
+const utils = require('../controllers/utils.js');
 
 class Candela {
     constructor() { }
@@ -22,7 +16,7 @@ class Candela {
 
         db.executeQuery(query, function (err, results) {
             // console.log(results.insertId);
-            callback(getErrorCodeByERR(err), results);
+            callback(utils.getErrorCodeByERR(err), results);
         });
     }
 
@@ -32,7 +26,7 @@ class Candela {
         // console.log(query);
 
         db.executeQuery(query, function (err, results) {
-            callback(getErrorCodeByERR(err), results);
+            callback(utils.getErrorCodeByERR(err), results);
         });
     }
 
@@ -42,7 +36,7 @@ class Candela {
         // console.log(query);
 
         db.executeQuery(query, function (err, results) {
-            callback(getErrorCodeByERR(err), results);
+            callback(utils.getErrorCodeByERR(err), results);
         });
     }
 

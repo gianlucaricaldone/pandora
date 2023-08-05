@@ -22,13 +22,13 @@ class PandoraController {
         async.parallel({
             candele: function (callback) {
                 const index = 2;
-                condelaController.getCandeleArretrate(candela, utils.qta_candele_arretrate, function (err, results) {
-                    callback(null, results);
+                condelaController.getCandeleArretrate(candela, utils.qta_candele_arretrate, function (err, result) {
+                    callback(null, result);
                 });
             },
             ordine: function (callback) {
                 ordineController.getOrdiniAttivi(function (err, result) {
-                    callback(null, results);
+                    callback(null, result);
                 });
             }
         }, function (err, results) {
@@ -52,19 +52,19 @@ class PandoraController {
                 const check = PandoraController.checkOrdiniAperti(results.ordine, type);
                 if (check) {
                     console.log('ORDINE >> NO - ORDINE DI TIPO' + type + " GIA APERTO - " + check);
-                    callback(true, null);
+                    main_callback(true, null);
                 }
 
                 if (success) {
                     // CREA ORDINE
                     ordineController.createNuovoOrdineFromCandela(candela, type, function (err, results) {
                         // console.log('ORDINE >> OK - CANDELA ' + candela.start_time + " REGOLA >> " + type);
-                        callback(false, true);
+                        main_callback(false, true);
                     });
                 }
                 else {
                     console.log('ORDINE >> NO - CANDELA ' + candela.start_time + " NON HA GENERATO ORDINE");
-                    callback(true, null);
+                    main_callback(true, null);
                 }
             }
         });

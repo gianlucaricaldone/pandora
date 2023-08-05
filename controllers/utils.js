@@ -55,10 +55,18 @@ function convertiCandele(candele) {
     return candele;
 }
 
+function getErrorCodeByERR(err) {
+    if (err) {
+        return process.env.RES_ERROR;
+    } else {
+        return process.env.RES_SUCCESS;
+    }
+}
 
 module.exports = {
     getPIP: getPIP,
     convertiCandele: convertiCandele,
+    getErrorCodeByERR: getErrorCodeByERR,
     pips_ordine: pips_ordine,
     pips_TP: pips_TP,
     PIP: PIP,

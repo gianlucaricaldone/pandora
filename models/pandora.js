@@ -1,15 +1,11 @@
 /*jshint multistr: true */
+var db = require('../config/db');
+const utils = require('../controllers/utils.js');
 
 class Pandora {
     constructor() { }
 
-    getErrorCodeByERR(err) {
-        if (err) {
-            return process.env.RES_ERROR;
-        } else {
-            return process.env.RES_SUCCESS;
-        }
-    }
+
 }
 
 
