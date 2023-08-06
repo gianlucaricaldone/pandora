@@ -24,7 +24,8 @@ const type = {
 const qta_candele_arretrate = 2;
 
 // PARAMETRI MODIFICABILI
-const pairs = 'BTCUSDT';
+// const pairs = 'BTCUSDT';
+const pairs = 'DOGEUSDT';
 const pips_ordine = 25;
 const pips_TP = 50;
 const min_streaming = '1m';
@@ -38,7 +39,7 @@ var url_price = 'https://www.binance.me/api/v3/ticker/price?symbol={pairs}'.repl
 
 function getPIP(price) {
     var pip_gen = PIP * price;
-    console.log('PIP GEN: ' + pip_gen);
+    // console.log('PIP GEN: ' + pip_gen);
     return pip_gen;
 }
 
@@ -70,6 +71,7 @@ module.exports = {
     getErrorCodeByERR: getErrorCodeByERR,
     pips_ordine: pips_ordine,
     pips_TP: pips_TP,
+    pips_SL: pips_SL,
     PIP: PIP,
     bet: bet,
     pairs: pairs,

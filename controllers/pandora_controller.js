@@ -56,7 +56,7 @@ class PandoraController {
 
         var data = JSON.parse(params);
         var prezzo_attuale = data.data.k.c;
-        
+        console.log('PREZZO ATTUALE: ' + prezzo_attuale);
         PandoraController.gestioneOrdiniAttivi(prezzo_attuale);
 
         if (data.data.k.x == true) {
@@ -194,15 +194,19 @@ class PandoraController {
     static gestioneOrdiniAttivi(prezzo) {
         ordineController.getOrdiniAttivi(utils.pairs, function (err, ordini) {
             ordini.forEach(ordine => {
+                // console.log('COMPARE PRICE: ' + parseFloat(ordine.price) + " - " + parseFloat(prezzo) + " --- " + (parseFloat(ordine.price) <= parseFloat(prezzo)));
+
                 if (ordine.side == utils.side.BUY && parseFloat(ordine.price) <= parseFloat(prezzo)) {
                     console.log('ORDINE BUY ' + ordine.link + ' DA ATTIVARE');
                     console.log('PREZZO ' + ordine.price + '<=' + prezzo);
 
                     if (ordine.link_type == utils.link_type.CANDELA) {
-                        console.log('CALCOLO E CREO TP E SL');
+                        console.log('ORDINE BUY --- CREO ORDINI TP E SL');
+                        ordineController.createNuovoOrdineFromOrdine(ordine, prezzo);
                     }
                     else if (ordine.link_type == utils.link_type.ORDINE) {
                         console.log('CHIUDERE QUESTO ORDINI E CANCELLARE LO SL CON LINK CORRISPONDENTE E LINK_TYPE = ORDINE');
+                        ordineController.chiudiTPeSL(ordine);
                     }
                     else {
                         console.log('LINK TYPE NON GESTITO: ' + ordine.link_type);
@@ -213,10 +217,12 @@ class PandoraController {
                     console.log('PREZZO ' + ordine.price + '>=' + prezzo);
 
                     if (ordine.link_type == utils.link_type.CANDELA) {
-                        console.log('CALCOLO E CREO TP E SL');
+                        console.log('ORDINE SELL --- CREO ORDINI TP E SL');
+                        ordineController.createNuovoOrdineFromOrdine(ordine, prezzo);
                     }
                     else if (ordine.link_type == utils.link_type.ORDINE) {
                         console.log('CHIUDERE QUESTO ORDINI E CANCELLARE il TP CON LINK CORRISPONDENTE E LINK_TYPE = ORDINE');
+                        ordineController.chiudiTPeSL(ordine);
                     }
                     else {
                         console.log('LINK TYPE NON GESTITO: ' + ordine.link_type);

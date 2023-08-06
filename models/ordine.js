@@ -5,9 +5,9 @@ const utils = require('../controllers/utils.js');
 class Ordine {
     constructor() { }
 
-    insertOrdineFromCandela(parameters, callback) {
+    insertOrdine(parameters, callback) {
 
-        var key = ['link', 'link_type', 'pandora_type', 'created', 'open', 'closed', 'cancelled', 'symbol', 'side', 'type', 'amount', 'price', 'params'];
+        var key = ['link', 'link_type', 'pandora_type', 'created', 'open', 'closed', 'cancelled', 'symbol', 'side', 'type', 'amount', 'price', 'params', 'TP_h', 'TP_l', 'SL_h', 'SL_l'];
         var string_key = '';
         // key.join('`,`');
         var string_params = '';
@@ -72,6 +72,24 @@ class Ordine {
 
     cancellaOrdine(ordine, callback) {
         var query = "UPDATE ordine SET created = 0, open = 0, closed = 0, cancelled = 1 WHERE id = " + ordine.id + ";";
+
+        // console.log(query);
+
+        db.executeQuery(query, function (err, results) {
+            addOrdineHistory(ordine.id, 'CANCELLATO');
+            callback(utils.getErrorCodeByERR(err), results);
+        });
+    }
+
+    cancellaOrdineCorrispondente(ordine, callback) {
+        var side = '';
+        if (ordine.side == utils.side.BUY) { 
+            side = utils.side.SELL;
+        }
+        else {
+            side = utils.side.BUY;
+        }
+        var query = "UPDATE ordine SET created = 0, open = 0, closed = 0, cancelled = 1 WHERE link = '" + ordine.link + "' AND side = '" + side + "';";
 
         // console.log(query);
 
