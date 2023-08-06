@@ -30,9 +30,11 @@ class OrdineController {
 
 
     createNuovoOrdineFromOrdine(ordine, prezzo, main_callback) {
+        var param_order = OrdineController.generaParametriOrdineFromOrdine(ordine, prezzo);
+
         async.parallel({
             activate: function (callback) {
-                OrdineController.attivaOrdine(ordine, function(err,result) {
+                OrdineController.chiudiOrdine(ordine, function(err,result) {
                     callback(err, result);
                 });
             },
@@ -41,8 +43,14 @@ class OrdineController {
                     callback(err, result);
                 });
             },
-            create: function (callback) {
-                var param_order = OrdineController.generaParametriOrdineFromOrdine(ordine, prezzo);
+            create_TP: function (callback) {
+                ordineModel.insertOrdine(param_order, function (err, result) {
+                    callback(err, result);
+                });
+            },
+            create_SL: function (callback) {
+                param_order.price = param_order.stop_loss;
+                param_order.side = utils.invertiSide(param_order.side);
                 ordineModel.insertOrdine(param_order, function (err, result) {
                     callback(err, result);
                 });
@@ -56,6 +64,11 @@ class OrdineController {
         async.parallel({
             close: function (callback) {
                 OrdineController.chiudiOrdine(ordine, function (err, result) {
+                    callback(err, result);
+                });
+            },
+            close_corrispondente: function (callback) {
+                OrdineController.chiudiOrdineCorrispondente(ordine, function (err, result) {
                     callback(err, result);
                 });
             },
@@ -73,7 +86,7 @@ class OrdineController {
     static generaParametriOrdineFromCandela(candela, tipo, side) {
 
         var pip = utils.getPIP(candela.close);
-
+        console.log('PIP: '+ pip);
         var lv_ordine_h = (candela.high_candle + (utils.pips_ordine * pip));
         var lv_ordine_l = (candela.low_candle - (utils.pips_ordine * pip));
 
@@ -82,27 +95,28 @@ class OrdineController {
         
         var stop_loss = (candela.high_candle + candela.low_candle) / 2;
 
-        // var diff_price = (parseFloat(candela.high_candle) - parseFloat(candela.low_candle));
-        // var perc = this.isWhatPercentOf(diff_price, candela.close);
+        var diff_price = (parseFloat(candela.high_candle) - parseFloat(candela.low_candle));
+        var perc = this.isWhatPercentOf(diff_price, candela.close);
 
-        // var gain_perc = this.isWhatPercentOf((lv_TP_h - lv_ordine_h), lv_ordine_h);
-        // var gain = utils.bet * (gain_perc / 100);
+        var gain_perc = this.isWhatPercentOf((lv_TP_h - lv_ordine_h), lv_ordine_h);
+        var gain = utils.bet * (gain_perc / 100);
 
 
         // console.log("\nCHIUSURA CANDELA: " + candela.start_time);
         // console.log("PZ START: " + parseFloat(candela.open).toFixed(3) + " PZ CLOSE: " + parseFloat(candela.close).toFixed(3) + " DIFF: " + diff_price.toFixed(3) + " %: " + perc.toFixed(3));
-        // console.log("ORD BUY " + tipo + " DA: " + lv_ordine_h.toFixed(3) + " - A: " + lv_TP_h.toFixed(3));
+        // console.log("ORD BUY " + tipo + " DA: " + lv_ordine_h + " - A: " + lv_TP_h);
+        // console.log("ORD SELL " + tipo + " DA: " + lv_ordine_l + " - A: " + lv_TP_l);
         // console.log("GAIN %: " + gain_perc.toFixed(3) + " CASH: " + gain.toFixed(3));
 
         var price = 0;
         var amount = 0;
         if (side == utils.side.BUY) {
             price = lv_ordine_h;
-            amount = parseFloat(utils.bet / lv_ordine_h).toFixed(5);
+            amount = parseFloat(utils.bet / lv_ordine_h).toFixed(8);
         }
         else {
             price = lv_ordine_l;
-            amount = parseFloat(utils.bet / lv_ordine_l).toFixed(5);
+            amount = parseFloat(utils.bet / lv_ordine_l).toFixed(8);
         }
         return {
             'link': candela.start_time,
@@ -185,6 +199,12 @@ class OrdineController {
     
     static chiudiOrdine(ordine, callback) {
         ordineModel.chiudiOrdine(ordine, function (err, result) {
+            callback(null, result);
+        });
+    }
+
+    static chiudiOrdineCorrispondente(ordine, callback) {
+        ordineModel.chiudiOrdineCorrispondente(ordine, function (err, result) {
             callback(null, result);
         });
     }

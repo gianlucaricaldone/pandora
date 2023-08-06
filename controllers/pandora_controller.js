@@ -56,7 +56,7 @@ class PandoraController {
 
         var data = JSON.parse(params);
         var prezzo_attuale = data.data.k.c;
-        // console.log('PREZZO ATTUALE: ' + prezzo_attuale);
+        console.log('\nPREZZO ATTUALE: ' + prezzo_attuale);
         PandoraController.gestioneOrdiniAttivi(prezzo_attuale);
 
         if (data.data.k.x == true) {
@@ -197,32 +197,38 @@ class PandoraController {
                 // console.log('COMPARE PRICE: ' + parseFloat(ordine.price) + " - " + parseFloat(prezzo) + " --- " + (parseFloat(ordine.price) <= parseFloat(prezzo)));
 
                 if (ordine.side == utils.side.BUY && parseFloat(ordine.price) <= parseFloat(prezzo)) {
-                    console.log('ORDINE BUY ' + ordine.link + ' DA ATTIVARE');
-                    console.log('PREZZO ' + ordine.price + '<=' + prezzo);
+                    console.log('ORDINE BUY ' + ordine.link + ' DA ATTIVARE | PREZZO ' + ordine.price + ' <=' + prezzo);
 
                     if (ordine.link_type == utils.link_type.CANDELA) {
                         console.log('ORDINE BUY --- CREO ORDINI TP E SL');
-                        ordineController.createNuovoOrdineFromOrdine(ordine, prezzo);
+                        ordineController.createNuovoOrdineFromOrdine(ordine, prezzo, function (err, results) {
+                            console.log('ORDINI DI TP E SL CREATI');
+                        });
                     }
                     else if (ordine.link_type == utils.link_type.ORDINE) {
                         console.log('CHIUDERE QUESTO ORDINI E CANCELLARE LO SL CON LINK CORRISPONDENTE E LINK_TYPE = ORDINE');
-                        ordineController.chiudiTPeSL(ordine);
+                        ordineController.chiudiTPeSL(ordine, function (err, results) {
+                            console.log('CHIUSI ORDINI DI TP E SL');
+                        });
                     }
                     else {
                         console.log('LINK TYPE NON GESTITO: ' + ordine.link_type);
                     }
                 }
                 else if (ordine.side == utils.side.SELL && parseFloat(ordine.price) >= parseFloat(prezzo)) {
-                    console.log('ORDINE SELL ' + ordine.link + ' DA ATTIVARE');
-                    console.log('PREZZO ' + ordine.price + '>=' + prezzo);
+                    console.log('ORDINE SELL ' + ordine.link + ' DA ATTIVARE | PREZZO ' + ordine.price + '>=' + prezzo);
 
                     if (ordine.link_type == utils.link_type.CANDELA) {
                         console.log('ORDINE SELL --- CREO ORDINI TP E SL');
-                        ordineController.createNuovoOrdineFromOrdine(ordine, prezzo);
+                        ordineController.createNuovoOrdineFromOrdine(ordine, prezzo, function (err, results) {
+                            console.log('ORDINI DI TP E SL CREATI');
+                        });
                     }
                     else if (ordine.link_type == utils.link_type.ORDINE) {
                         console.log('CHIUDERE QUESTO ORDINI E CANCELLARE il TP CON LINK CORRISPONDENTE E LINK_TYPE = ORDINE');
-                        ordineController.chiudiTPeSL(ordine);
+                        ordineController.chiudiTPeSL(ordine, function (err, results) {
+                            console.log('CHIUSI ORDINI DI TP E SL');
+                        });
                     }
                     else {
                         console.log('LINK TYPE NON GESTITO: ' + ordine.link_type);

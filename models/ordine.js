@@ -27,10 +27,10 @@ class Ordine {
         ".replace('{string_key}', string_key).replace('{string_params}', string_params);
 
 
-        console.log(query);
+        // console.log(query);
 
         db.executeQuery(query, function (err, results) {
-            console.log(results.insertId);
+            // console.log(results.insertId);
             addOrdineHistory(results.insertId, 'CREATO');
             callback(utils.getErrorCodeByERR(err), results);
         });
@@ -82,19 +82,13 @@ class Ordine {
     }
 
     cancellaOrdineCorrispondente(ordine, callback) {
-        var side = '';
-        if (ordine.side == utils.side.BUY) { 
-            side = utils.side.SELL;
-        }
-        else {
-            side = utils.side.BUY;
-        }
+        var side = utils.invertiSide(ordine.side);
         var query = "UPDATE ordine SET created = 0, open = 0, closed = 0, cancelled = 1 WHERE link = '" + ordine.link + "' AND side = '" + side + "';";
 
         // console.log(query);
 
         db.executeQuery(query, function (err, results) {
-            addOrdineHistory(ordine.id, 'CANCELLATO');
+            // addOrdineHistory(ordine.id, 'CANCELLATO');
             callback(utils.getErrorCodeByERR(err), results);
         });
     }
@@ -106,6 +100,17 @@ class Ordine {
         db.executeQuery(query, function (err, results) {
 
             addOrdineHistory(ordine.id, 'CHIUSO');
+            callback(utils.getErrorCodeByERR(err), results);
+        });
+    }
+
+    chiudiOrdineCorrispondente(ordine, callback) {
+        var query = "UPDATE ordine SET created = 0, open = 0, closed = 1, cancelled = 0 WHERE id = " + ordine.link + ";";
+        // console.log(query);
+
+        db.executeQuery(query, function (err, results) {
+
+            addOrdineHistory(ordine.link, 'CHIUSO');
             callback(utils.getErrorCodeByERR(err), results);
         });
     }

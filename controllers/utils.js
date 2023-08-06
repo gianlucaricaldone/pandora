@@ -65,6 +65,14 @@ function getErrorCodeByERR(err) {
     }
 }
 
+function invertiSide(tipo_side) {
+    if (tipo_side == side.BUY) {
+        return side.SELL;
+    }
+    else {
+        return side.BUY;
+    }
+}
 module.exports = {
     getPIP: getPIP,
     convertiCandele: convertiCandele,
@@ -81,4 +89,5 @@ module.exports = {
     qta_candele_arretrate: qta_candele_arretrate,
     min_streaming: min_streaming,
     url_price: url_price,
+    invertiSide: invertiSide
 };
