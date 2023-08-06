@@ -56,7 +56,7 @@ class PandoraController {
 
         var data = JSON.parse(params);
         var prezzo_attuale = data.data.k.c;
-        console.log('PREZZO ATTUALE: ' + prezzo_attuale);
+        // console.log('PREZZO ATTUALE: ' + prezzo_attuale);
         PandoraController.gestioneOrdiniAttivi(prezzo_attuale);
 
         if (data.data.k.x == true) {

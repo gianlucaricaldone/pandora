@@ -71,7 +71,6 @@ module.exports = {
     getErrorCodeByERR: getErrorCodeByERR,
     pips_ordine: pips_ordine,
     pips_TP: pips_TP,
-    pips_SL: pips_SL,
     PIP: PIP,
     bet: bet,
     pairs: pairs,
