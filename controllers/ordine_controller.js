@@ -86,7 +86,7 @@ class OrdineController {
     static generaParametriOrdineFromCandela(candela, tipo, side) {
 
         var pip = utils.getPIP(candela.close);
-        console.log('PIP: '+ pip);
+        // console.log('PIP: '+ pip);
         var lv_ordine_h = (candela.high_candle + (utils.pips_ordine * pip));
         var lv_ordine_l = (candela.low_candle - (utils.pips_ordine * pip));
 
@@ -141,14 +141,11 @@ class OrdineController {
         var price = prezzo;
 
         // La side e' il contrario dell'ordine da candela. Se prima ho comprato ora vendo e viceversa
-        var side = '';
         if (ordine.side == utils.side.BUY) {
             price = ordine.TP_h;
-            side = utils.side.SELL;
         }
         else {
             price = ordine.TP_l;
-            side = utils.side.BUY;
         }
 
         var amount = parseFloat(utils.bet / price).toFixed(5);
@@ -159,7 +156,7 @@ class OrdineController {
             'pandora_type': ordine.pandora_type,
             'created': 1,
             'symbol': utils.pairs,
-            'side': side,
+            'side': ordine.side,
             'type': utils.type.LIMIT,
             'amount': amount,
             'price': price,
