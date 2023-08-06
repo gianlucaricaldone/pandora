@@ -194,9 +194,9 @@ class PandoraController {
     static gestioneOrdiniAttivi(prezzo) {
         ordineController.getOrdiniAttivi(utils.pairs, function (err, ordini) {
             ordini.forEach(ordine => {
-                if (ordine.side == utils.side.BUY && parseFloat(ordine.price) <= parseFloat(prezzo_attuale)) {
+                if (ordine.side == utils.side.BUY && parseFloat(ordine.price) <= parseFloat(prezzo)) {
                     console.log('ORDINE BUY ' + ordine.link + ' DA ATTIVARE');
-                    console.log('PREZZO ' + ordine.price + '<=' + prezzo_attuale);
+                    console.log('PREZZO ' + ordine.price + '<=' + prezzo);
 
                     if (ordine.link_type == utils.link_type.CANDELA) {
                         console.log('CALCOLO E CREO TP E SL');
@@ -208,9 +208,9 @@ class PandoraController {
                         console.log('LINK TYPE NON GESTITO: ' + ordine.link_type);
                     }
                 }
-                else if (ordine.side == utils.side.SELL && parseFloat(ordine.price) >= parseFloat(prezzo_attuale)) {
+                else if (ordine.side == utils.side.SELL && parseFloat(ordine.price) >= parseFloat(prezzo)) {
                     console.log('ORDINE SELL ' + ordine.link + ' DA ATTIVARE');
-                    console.log('PREZZO ' + ordine.price + '>=' + prezzo_attuale);
+                    console.log('PREZZO ' + ordine.price + '>=' + prezzo);
 
                     if (ordine.link_type == utils.link_type.CANDELA) {
                         console.log('CALCOLO E CREO TP E SL');

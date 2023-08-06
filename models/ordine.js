@@ -31,6 +31,7 @@ class Ordine {
 
         db.executeQuery(query, function (err, results) {
             console.log(results.insertId);
+            addOrdineHistory(results.insertId, 'CREATO');
             callback(utils.getErrorCodeByERR(err), results);
         });
     }
@@ -57,8 +58,48 @@ class Ordine {
     }
 
 
+
+    attivaOrdine(ordine, callback) {
+        var query = "UPDATE ordine SET created = 0, open = 1, closed = 0, cancelled = 0 WHERE id = " + ordine.id + ";";
+
+        // console.log(query);
+
+        db.executeQuery(query, function (err, results) {
+            addOrdineHistory(ordine.id, 'APERTO');
+            callback(utils.getErrorCodeByERR(err), results);
+        });
+    }
+
+    cancellaOrdine(ordine, callback) {
+        var query = "UPDATE ordine SET created = 0, open = 0, closed = 0, cancelled = 1 WHERE id = " + ordine.id + ";";
+
+        // console.log(query);
+
+        db.executeQuery(query, function (err, results) {
+            addOrdineHistory(ordine.id, 'CANCELLATO');
+            callback(utils.getErrorCodeByERR(err), results);
+        });
+    }
+
+    chiudiOrdine(ordine, callback) {
+        var query = "UPDATE ordine SET created = 0, open = 0, closed = 1, cancelled = 0 WHERE id = " + ordine.id + ";";
+        // console.log(query);
+
+        db.executeQuery(query, function (err, results) {
+
+            addOrdineHistory(ordine.id, 'CHIUSO');
+            callback(utils.getErrorCodeByERR(err), results);
+        });
+    }
 }
 
+function addOrdineHistory(id, stato) {
+    var query = "INSERT INTO `ordine_history` (`id_ordine`, `stato`) VALUES (" + id + ", '" + stato + "')";
+
+    // console.log(query);
+
+    db.executeQuery(query, function (err, results) {});
+}
 
 
 module.exports = Ordine;

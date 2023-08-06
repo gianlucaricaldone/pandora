@@ -19,7 +19,7 @@ const type = {
     'TAKE_PROFIT': 'TAKE_PROFIT',
     'TAKE_PROFIT_LIMIT': 'TAKE_PROFIT_LIMIT',
     'LIMIT_MAKER': 'LIMIT_MAKER',
-}
+};
 
 const qta_candele_arretrate = 2;
 
@@ -79,5 +79,5 @@ module.exports = {
     type: type,
     qta_candele_arretrate: qta_candele_arretrate,
     min_streaming: min_streaming,
-    url_price: url_price
+    url_price: url_price,
 };

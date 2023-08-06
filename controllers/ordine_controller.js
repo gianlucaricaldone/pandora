@@ -63,6 +63,18 @@ class OrdineController {
 
     }
 
+    attivaOrdine(ordine, callback) {
+        ordineModel.attivaOrdine(ordine, function (err, result) {
+            callback(null, result);
+        });
+    }
+
+    cancellaOrdine(ordine, callback) {
+        ordineModel.cancellaOrdine(ordine, function (err, result) {
+            callback(null, result);
+        });
+    }
+
     getOrdiniAttivi(pairs, callback) {
         ordineModel.getOrdiniAttivi(pairs, function (err, result) {
             callback(null, result);
