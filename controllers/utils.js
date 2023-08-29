@@ -11,6 +11,10 @@ const side = {
     'BUY': 'BUY',
     'SELL': 'SELL'
 };
+const action = {
+    'BUY': 'BUY',
+    'SELL': 'SELL'
+};
 const type = {
     'LIMIT': 'LIMIT',
     'MARKET': 'MARKET',
@@ -25,9 +29,10 @@ const qta_candele_arretrate = 2;
 
 // PARAMETRI MODIFICABILI
 // const pairs = 'BTCUSDT';
-const pairs = 'DOGEUSDT';
-const pips_ordine = 25;
-const pips_TP = 50;
+const pairs = 'BTCUSDT';
+const pips_ordine = 65;
+const pips_TP = 100;
+const pips_SL = 15;
 const min_streaming = '1m';
 
 // cash ingresso a mercato
@@ -79,6 +84,7 @@ module.exports = {
     getErrorCodeByERR: getErrorCodeByERR,
     pips_ordine: pips_ordine,
     pips_TP: pips_TP,
+    pips_SL: pips_SL,
     PIP: PIP,
     bet: bet,
     pairs: pairs,
@@ -89,5 +95,6 @@ module.exports = {
     qta_candele_arretrate: qta_candele_arretrate,
     min_streaming: min_streaming,
     url_price: url_price,
-    invertiSide: invertiSide
+    invertiSide: invertiSide,
+    action: action
 };

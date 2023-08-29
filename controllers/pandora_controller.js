@@ -30,8 +30,8 @@ class PandoraController {
     
     startStreamBinance(pairs) {
         // Metodo che fa lo streaming del prezzo e notifica al metodo per la creazione ordine e salvataggioa  DB
-
         const WebsocketStream = require('@binance/connector/src/websocketStream');
+        
         const callbacks = {
             open: () => {
                 logger.debug('Connected with Websocket server');
@@ -40,23 +40,24 @@ class PandoraController {
                 logger.debug('Disconnected with Websocket server');
             },
             message: data => {
-                this.aggiungiRigaFlussoBinance(data);
+
+                var params = JSON.parse(data);
+                var prezzo_attuale = params.data.k.c;
+                console.log('\nPREZZO ATTUALE: ' + prezzo_attuale);
+                this.aggiungiRigaFlussoBinance(params);
             }
         };
         const websocketStreamClient = new WebsocketStream({ logger, callbacks, combinedStreams: true });
         websocketStreamClient.kline(pairs, utils.min_streaming);
     }
 
-    aggiungiRigaFlussoBinance(params) {
+    aggiungiRigaFlussoBinance(data) {
         // Metodo di raccordo,
         // Riceve la candela in costruzione e controlla il prezzo con eventuali ordini aperti
         // Se la candela in ingresso si è chiusa in questo momento inserisce nella tabella candela e prova a generare un ordine
 
         const start = Date.now();
-
-        var data = JSON.parse(params);
         var prezzo_attuale = data.data.k.c;
-        console.log('\nPREZZO ATTUALE: ' + prezzo_attuale);
         PandoraController.gestioneOrdiniAttivi(prezzo_attuale);
 
         if (data.data.k.x == true) {
@@ -201,7 +202,7 @@ class PandoraController {
 
                     if (ordine.link_type == utils.link_type.CANDELA) {
                         console.log('ORDINE BUY --- CREO ORDINI TP E SL');
-                        ordineController.createNuovoOrdineFromOrdine(ordine, prezzo, function (err, results) {
+                        ordineController.createNuovoOrdineFromOrdine(ordine, prezzo, utils.action.SELL, function (err, results) {
                             console.log('ORDINI DI TP E SL CREATI');
                         });
                     }
@@ -220,7 +221,7 @@ class PandoraController {
 
                     if (ordine.link_type == utils.link_type.CANDELA) {
                         console.log('ORDINE SELL --- CREO ORDINI TP E SL');
-                        ordineController.createNuovoOrdineFromOrdine(ordine, prezzo, function (err, results) {
+                        ordineController.createNuovoOrdineFromOrdine(ordine, prezzo, utils.action.BUY, function (err, results) {
                             console.log('ORDINI DI TP E SL CREATI');
                         });
                     }

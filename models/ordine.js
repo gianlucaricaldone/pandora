@@ -7,7 +7,7 @@ class Ordine {
 
     insertOrdine(parameters, callback) {
 
-        var key = ['link', 'link_type', 'pandora_type', 'created', 'open', 'closed', 'cancelled', 'symbol', 'side', 'type', 'amount', 'price', 'params', 'TP_h', 'TP_l', 'SL_h', 'SL_l'];
+        var key = ['link', 'link_type', 'pandora_type', 'created', 'open', 'closed', 'cancelled', 'symbol', 'side', 'type', 'amount', 'price', 'params', 'TP_h', 'TP_l', 'SL_h', 'SL_l', 'action'];
         var string_key = '';
         // key.join('`,`');
         var string_params = '';

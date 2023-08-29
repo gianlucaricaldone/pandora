@@ -29,8 +29,8 @@ class OrdineController {
     }
 
 
-    createNuovoOrdineFromOrdine(ordine, prezzo, main_callback) {
-        var param_order = OrdineController.generaParametriOrdineFromOrdine(ordine, prezzo);
+    createNuovoOrdineFromOrdine(ordine, prezzo, action, main_callback) {
+        var param_order = OrdineController.generaParametriOrdineFromOrdine(ordine, prezzo, action);
 
         async.parallel({
             activate: function (callback) {
@@ -90,10 +90,15 @@ class OrdineController {
         var lv_ordine_h = (candela.high_candle + (utils.pips_ordine * pip));
         var lv_ordine_l = (candela.low_candle - (utils.pips_ordine * pip));
 
-        var lv_TP_h = parseFloat(lv_ordine_h + (utils.pips_TP * pip));
-        var lv_TP_l = parseFloat(lv_ordine_l - (utils.pips_TP * pip));
-        
         var stop_loss = (candela.high_candle + candela.low_candle) / 2;
+        // var lv_ordine_h = (parseFloat(candela.close) + (utils.pips_ordine * pip));
+        var lv_TP_h = parseFloat(lv_ordine_h + (utils.pips_TP * pip));
+        var lv_SL_h = parseFloat(lv_ordine_h - (utils.pips_SL * pip));
+
+        // var lv_ordine_l = (parseFloat(candela.close) - (utils.pips_ordine * pip));
+        var lv_TP_l = parseFloat(lv_ordine_l - (utils.pips_TP * pip));
+        var lv_SL_l = parseFloat(lv_ordine_l + (utils.pips_SL * pip));
+        
 
         var diff_price = (parseFloat(candela.high_candle) - parseFloat(candela.low_candle));
         var perc = this.isWhatPercentOf(diff_price, candela.close);
@@ -101,12 +106,13 @@ class OrdineController {
         var gain_perc = this.isWhatPercentOf((lv_TP_h - lv_ordine_h), lv_ordine_h);
         var gain = utils.bet * (gain_perc / 100);
 
-
-        // console.log("\nCHIUSURA CANDELA: " + candela.start_time);
-        // console.log("PZ START: " + parseFloat(candela.open).toFixed(3) + " PZ CLOSE: " + parseFloat(candela.close).toFixed(3) + " DIFF: " + diff_price.toFixed(3) + " %: " + perc.toFixed(3));
-        // console.log("ORD BUY " + tipo + " DA: " + lv_ordine_h + " - A: " + lv_TP_h);
-        // console.log("ORD SELL " + tipo + " DA: " + lv_ordine_l + " - A: " + lv_TP_l);
-        // console.log("GAIN %: " + gain_perc.toFixed(3) + " CASH: " + gain.toFixed(3));
+        console.log("\n\n");
+        console.log("\nCHIUSURA CANDELA: " + candela.start_time);
+        console.log("PZ START: " + parseFloat(candela.open).toFixed(3) + " PZ CLOSE: " + parseFloat(candela.close).toFixed(3) + " DIFF: " + diff_price.toFixed(3) + " %: " + perc.toFixed(3));
+        console.log("ORD BUY " + tipo + " DA: " + lv_ordine_h + " - A: " + lv_TP_h);
+        console.log("ORD SELL " + tipo + " DA: " + lv_ordine_l + " - A: " + lv_TP_l);
+        console.log("GAIN %: " + gain_perc.toFixed(3) + " CASH: " + gain.toFixed(3));
+        console.log("\n\n");
 
         var price = 0;
         var amount = 0;
@@ -125,6 +131,7 @@ class OrdineController {
             'created': 1,
             'symbol': utils.pairs,
             'side': side,
+            'action': side,
             'type': utils.type.LIMIT,
             'amount': amount,
             'price': price,
@@ -135,20 +142,21 @@ class OrdineController {
         };
     }
 
-    static generaParametriOrdineFromOrdine(ordine, prezzo) {
+    static generaParametriOrdineFromOrdine(ordine, prezzo, action) {
 
         // Prezzo e' il valore triggerato dallo streaming
-        var price = prezzo;
+        var price = 0;
+        var sl = 0;
 
         // La side e' il contrario dell'ordine da candela. Se prima ho comprato ora vendo e viceversa
         if (ordine.side == utils.side.BUY) {
             price = ordine.TP_h;
+            sl = ordine.SL_h;
         }
         else {
             price = ordine.TP_l;
+            sl = ordine.SL_l;
         }
-
-        var amount = parseFloat(utils.bet / price).toFixed(5);
 
         return {
             'link': ordine.id,
@@ -158,9 +166,10 @@ class OrdineController {
             'symbol': utils.pairs,
             'side': ordine.side,
             'type': utils.type.LIMIT,
-            'amount': amount,
+            'amount': ordine.amount,
             'price': price,
-            'stop_loss': ordine.stop_loss
+            'stop_loss': sl,
+            'action': action
         };
     }
 
